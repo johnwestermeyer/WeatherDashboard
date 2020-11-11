@@ -10,4 +10,4 @@
 
 * Deployed at [https://johnwestermeyer.github.io/WeatherDashboard/](https://johnwestermeyer.github.io/WeatherDashboard/)
 
-* [Screenshot](./screenshot.png)
+* [Screenshot](https://github.com/johnwestermeyer/WeatherDashboard/blob/main/screenshot.PNG)
