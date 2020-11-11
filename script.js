@@ -1,4 +1,4 @@
-let APIKey = "8375474e12a3c07e327029469afe5cd7";
+let APIKey = config.MY_KEY;
 let city = "Long Beach, California";
 let weatherDiv = $(".weatherInfo");
 let navDiv = $(".list-group-flush");
