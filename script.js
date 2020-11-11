@@ -5,10 +5,13 @@ let navDiv = $(".list-group-flush");
 let fiveDay = $(".card-group");
 let lat, lon = "";
 let citySave = [];
+
+//if no local storage, default to Long Beach
 if(localStorage.getItem("weather") === null){ 
   city = "Long Beach, California";
   populate();
-} else{
+} else{ 
+  //If there is local storage populate to side nav and load most recent city
   citySave = JSON.parse(localStorage.getItem("weather"));
   city = citySave[citySave.length - 1];
   citySave.forEach(e => {    
@@ -18,7 +21,7 @@ if(localStorage.getItem("weather") === null){
   populate();
 }
 
-
+//pulls up entered city weather
 $(document).ready(function(){
     $("#submit").on("click", function(event){
         event.preventDefault();
@@ -27,13 +30,14 @@ $(document).ready(function(){
     })
   });
 
+//pulls up previous entered city weather
 $(".list-group-flush").on("click", "a", function(event){
     event.preventDefault();      
     city = $(this).data("city");
     populate();
   });
 
-  
+//populates the main container with weather info
   function populate(){
     let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=imperial";
     $.ajax({
@@ -61,6 +65,7 @@ $(".list-group-flush").on("click", "a", function(event){
         historic();
   })};
 
+//checks for UV Index value and assigns css code based on severity
 function uvIndex(){
   let queryURL = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon +"&appid=" + APIKey + "&units=imperial";
   $.ajax({
@@ -79,6 +84,7 @@ function uvIndex(){
     weatherDiv.append(`<p>UV Index: <span class="${uvDisp} p-2">${uvVal}</span></p>`);
 })}
 
+//populates the 5-day forecast
 function historic(){
   let queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=current,minutely,hourly,alerts&cnt=6&appid="+ APIKey + "&units=imperial";
   $.ajax({
@@ -100,6 +106,7 @@ function historic(){
 })
 }
 
+//localStorage creation and management
 function handleStorage(){
   if(localStorage.getItem("weather") === null){
     localStorage.setItem("weather", JSON.stringify([city]));
