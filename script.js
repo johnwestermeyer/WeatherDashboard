@@ -50,7 +50,6 @@ $(".list-group-flush").on("click", "a", function(event){
         let history = false;
         for(let i = 0; i < historyLinks.length; i++){
             if(historyLinks[i].dataset.city === city){
-              console.log("this");
               history = true;            
           }
         }
