@@ -44,7 +44,7 @@ $(".list-group-flush").on("click", "a", function(event){
         let time = moment().format("MMM Do YYYY"); 
         lat = response.coord.lat;
         lon = response.coord.lon;
-        weatherDiv.append(`<h1 class="mt-4">${response.name} (${time})<img src="http://openweathermap.org/img/w/${response.weather[0].icon}.png"></h1>`);
+        weatherDiv.append(`<h1 class="mt-4">${response.name} (${time})<img src="https://openweathermap.org/img/w/${response.weather[0].icon}.png"></h1>`);
         weatherDiv.append(`<p>Temperature: ${response.main.temp}°F</p><p>Humidity: ${response.main.humidity}</p><p>Wind Speed: ${response.wind.speed} MPH</p>`);
         let historyLinks = document.querySelectorAll("a");
         let history = false;
@@ -92,7 +92,7 @@ function historic(){
     fiveDay.append(`<div class="card text-white bg-primary mr-2" style="max-width: 18rem;">
     <div class="card-body">
       <h5 class="card-title">${histDate}</h5>
-      <img src="http://openweathermap.org/img/w/${response.daily[i].weather[0].icon}.png">
+      <img src="https://openweathermap.org/img/w/${response.daily[i].weather[0].icon}.png">
       <p class="card-text">Temp: ${response.daily[i].temp.day}°F</p>
       <p class="card-text">Humidity: ${response.daily[i].humidity}</p>
     </div>
