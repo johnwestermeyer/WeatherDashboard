@@ -2,8 +2,22 @@ let APIKey = "8375474e12a3c07e327029469afe5cd7";
 let city = "Long Beach, California";
 let weatherDiv = $(".weatherInfo");
 let navDiv = $(".list-group-flush");
-let fiveDay =$(".card-group");
+let fiveDay = $(".card-group");
 let lat, lon = "";
+let citySave = [];
+if(localStorage.getItem("weather") === null){ 
+  city = "Long Beach, California";
+  populate();
+} else{
+  citySave = JSON.parse(localStorage.getItem("weather"));
+  city = citySave[citySave.length - 1];
+  citySave.forEach(e => {    
+    let name = e.split(",")
+    navDiv.append(`<a href="#" class="list-group-item list-group-item-action bg-light" data-city="${e}">${name[0]}</a>`);
+  })  
+  populate();
+}
+
 
 $(document).ready(function(){
     $("#submit").on("click", function(event){
@@ -12,6 +26,13 @@ $(document).ready(function(){
         populate();
     })
   });
+
+$(".list-group-flush").on("click", "a", function(event){
+    event.preventDefault();      
+    city = $(this).data("city");
+    populate();
+  });
+
   
   function populate(){
     let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey + "&units=imperial";
@@ -20,18 +41,29 @@ $(document).ready(function(){
         method: "GET"
       }).then(function(response) {
         weatherDiv.html("");
-        var time = moment().format("MMM Do YYYY"); 
+        let time = moment().format("MMM Do YYYY"); 
         lat = response.coord.lat;
         lon = response.coord.lon;
         weatherDiv.append(`<h1 class="mt-4">${response.name} (${time})<img src="http://openweathermap.org/img/w/${response.weather[0].icon}.png"></h1>`);
-        weatherDiv.append(`<p>Temperature: ${response.main.temp}°F</p><p>Humidity: ${response.main.humidity}</p><p>Wind Speed: ${response.wind.speed} MPH</p>`)
-        navDiv.append(`<a href="#" class="list-group-item list-group-item-action bg-light" data-city="${response.name}">${response.name}</a>`);
+        weatherDiv.append(`<p>Temperature: ${response.main.temp}°F</p><p>Humidity: ${response.main.humidity}</p><p>Wind Speed: ${response.wind.speed} MPH</p>`);
+        let historyLinks = document.querySelectorAll("a");
+        let history = false;
+        for(let i = 0; i < historyLinks.length; i++){
+            if(historyLinks[i].dataset.city === city){
+              console.log("this");
+              history = true;            
+          }
+        }
+        if(!history){          
+          navDiv.append(`<a href="#" class="list-group-item list-group-item-action bg-light" data-city="${city}">${response.name}</a>`);
+          handleStorage();
+        }
         uvIndex();
         historic();
   })};
 
 function uvIndex(){
-  var queryURL = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon +"&appid=" + APIKey + "&units=imperial";
+  let queryURL = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon +"&appid=" + APIKey + "&units=imperial";
   $.ajax({
       url: queryURL,
       method: "GET"
@@ -45,18 +77,18 @@ function uvIndex(){
     } else {
       uvDisp = "badge badge-danger";
     }
-    weatherDiv.append(`<p>UV Index: <span class="${uvDisp} p-2">${uvVal}</span></p>`)
+    weatherDiv.append(`<p>UV Index: <span class="${uvDisp} p-2">${uvVal}</span></p>`);
 })}
 
 function historic(){
-  var queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=current,minutely,hourly,alerts&cnt=6&appid="+ APIKey + "&units=imperial";
+  let queryURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=current,minutely,hourly,alerts&cnt=6&appid="+ APIKey + "&units=imperial";
   $.ajax({
     url: queryURL,
     method: "GET"
 }).then(function(response) {
-  console.log(response);
+  fiveDay.html("");
   for(let i = 1; i < 6; i++){
-    var histDate = moment.unix(response.daily[i].dt).format("MM/DD/YYYY");
+    let histDate = moment.unix(response.daily[i].dt).format("MM/DD/YYYY");
     fiveDay.append(`<div class="card text-white bg-primary mr-2" style="max-width: 18rem;">
     <div class="card-body">
       <h5 class="card-title">${histDate}</h5>
@@ -68,5 +100,14 @@ function historic(){
   }
 })
 }
-  
-  populate();
+
+function handleStorage(){
+  if(localStorage.getItem("weather") === null){
+    localStorage.setItem("weather", JSON.stringify([city]));
+  } else{
+    let citySave = JSON.parse(localStorage.getItem("weather"));
+    citySave[citySave.length] = city;
+    localStorage.setItem("weather", JSON.stringify(citySave));
+  }
+}
+
